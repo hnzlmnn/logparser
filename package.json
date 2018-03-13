@@ -1,0 +1,11 @@
+{
+  "name": "logparser",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Malte Heinzelmann",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^3.1.0",
+    "glob-fs": "^0.1.7"
+  }
+}
