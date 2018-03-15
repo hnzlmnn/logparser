@@ -1,42 +1,16 @@
+const fs = require("fs");
 const LogSet = require("./lib/logset");
+const Queue = require("./lib/queue");
 
-const log = new LogSet("logs/**/*.log");
+const log = require("debug")("loganalyzer:log");
 
-// log.search({
-//     extract: json => {
-//         return ["realip"];
-//     },
-//     callback: entry => {
-//         console.log(entry);
-//     }
-// });
 
-log.contains({
-    property: "url",
-    value: "/user/"
-}).on("entry", entry => {
-    console.log(entry)
+const queue = new Queue();
+queue.enqueue(() => {
+    log("Do something with the log");
+    const logset = new LogSet(`logs/**/*.log`);
+    return logset.count().then(count => {
+        console.log(`There are ${count} log entries.`);
+    })
 });
-
-log.contains({
-    property: "message",
-    value: "Unknown"
-}).on("entry", entry => {
-    console.log(entry)
-});
-
-log.count({
-    selector: json => {
-        return json.action === "recv" && json.message.indexOf("id") !== -1
-    }
-}).then(count => {
-    console.log(`${count} entries`);
-});
-
-// log.unique({
-//     selector: json => {
-//         return json.action === "recv" && json.message.indexOf("id") !== -1
-//     }
-// }).then(count => {
-//     console.log(`${count} entries`);
-// });
+queue.start();
